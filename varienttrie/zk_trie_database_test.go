@@ -35,7 +35,7 @@ func TestDatabase(t *testing.T) {
 		for i := 0; i < 100; i++ {
 			key := []byte(fmt.Sprintf("key_%d", i))
 			value := []byte(fmt.Sprintf("value_%d", i))
-			gotValue, err := db.Get(key)
+			gotValue, err := db.GetFrom(nil, key)
 			assert.NoError(t, err)
 			assert.Equal(t, value, gotValue)
 		}
@@ -45,7 +45,7 @@ func TestDatabase(t *testing.T) {
 		defer wg.Done()
 		for i := 100; i < 200; i++ {
 			key := []byte(fmt.Sprintf("key_%d", i))
-			value, err := db.Get(key)
+			value, err := db.GetFrom(nil, key)
 			assert.Equal(t, ErrKeyNotFound, err)
 			assert.Nil(t, value)
 		}

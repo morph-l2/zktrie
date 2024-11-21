@@ -50,6 +50,7 @@ type ZkTrieImpl struct {
 	lock      sync.RWMutex
 	db        ZktrieDatabase
 	rootKey   *zkt.Hash
+	origin    *zkt.Hash
 	writable  bool
 	maxLevels int
 	Debug     bool
@@ -76,6 +77,7 @@ func NewZkTrieImplWithRoot(storage ZktrieDatabase, root *zkt.Hash, maxLevels int
 		caching:      make(map[zkt.Hash]zkt.Hash),
 	}
 	mt.rootKey = root
+	mt.origin = root
 	if prefix == nil {
 		mt.prefix = []byte{}
 	} else {
@@ -113,6 +115,7 @@ func (mt *ZkTrieImpl) Root() (*zkt.Hash, error) {
 	}
 
 	mt.rootKey = rootKey
+	mt.origin = rootKey
 	mt.dirtyIndex = big.NewInt(0)
 	mt.dirtyStorage = hashedDirtyStorage
 	mt.caching = newCaching
@@ -690,7 +693,7 @@ func (mt *ZkTrieImpl) getNode(pathKey *zkt.Hash) (*Node, error) {
 	}
 
 	key := zkt.GetPathKey(mt.prefix, pathKey[:])
-	nBytes, err := mt.db.Get(key[:])
+	nBytes, err := mt.db.GetFrom(mt.origin[:], key[:])
 	if err == ErrKeyNotFound {
 		return nil, ErrKeyNotFound
 	} else if err != nil {

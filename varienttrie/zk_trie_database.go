@@ -8,7 +8,7 @@ import (
 type ZktrieDatabase interface {
 	UpdatePreimage(preimage []byte, hashField *big.Int)
 	Put(k, v []byte) error
-	Get(key []byte) ([]byte, error)
+	GetFrom(root, key []byte) ([]byte, error)
 }
 
 type Database struct {
@@ -26,7 +26,7 @@ func (db *Database) Put(k, v []byte) error {
 	return nil
 }
 
-func (db *Database) Get(key []byte) ([]byte, error) {
+func (db *Database) GetFrom(root, key []byte) ([]byte, error) {
 	db.lock.RLock()
 	defer db.lock.RUnlock()
 
