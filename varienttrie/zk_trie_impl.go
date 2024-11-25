@@ -77,7 +77,7 @@ func NewZkTrieImplWithRoot(storage ZktrieDatabase, root *zkt.Hash, origin *zkt.H
 		caching:      make(map[zkt.Hash]zkt.Hash),
 	}
 	mt.rootKey = root
-	mt.origin = root
+	mt.origin = origin
 	if prefix == nil {
 		mt.prefix = []byte{}
 	} else {
