@@ -22,7 +22,7 @@ func newZkTrieImpl(storage ZktrieDatabase, maxLevels int) (*zkTrieImplTestWrappe
 // NewZkTrieImplWithRoot loads a new ZkTrieImpl. If in the storage already exists one
 // will open that one, if not, will create a new one.
 func newZkTrieImplWithRoot(storage ZktrieDatabase, root *zkt.Hash, maxLevels int) (*zkTrieImplTestWrapper, error) {
-	impl, err := NewZkTrieImplWithRoot(storage, root, maxLevels, nil)
+	impl, err := NewZkTrieImplWithRoot(storage, root, &zkt.HashZero, maxLevels, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func TestMerkleTree_Init(t *testing.T) {
 
 	t.Run("Test NewZkTrieImplWithRoot with zero hash root", func(t *testing.T) {
 		db := NewZkTrieMemoryDb()
-		mt, err := NewZkTrieImplWithRoot(db, &zkt.HashZero, maxLevels, nil)
+		mt, err := NewZkTrieImplWithRoot(db, &zkt.HashZero, &zkt.HashZero, maxLevels, nil)
 		assert.NoError(t, err)
 		mtRoot, err := mt.Root()
 		assert.NoError(t, err)
@@ -89,7 +89,7 @@ func TestMerkleTree_Init(t *testing.T) {
 
 	t.Run("Test NewZkTrieImplWithRoot with non-zero hash root and node exists", func(t *testing.T) {
 		db := NewZkTrieMemoryDb()
-		mt1, err := NewZkTrieImplWithRoot(db, &zkt.HashZero, maxLevels, nil)
+		mt1, err := NewZkTrieImplWithRoot(db, &zkt.HashZero, &zkt.HashZero, maxLevels, nil)
 		assert.NoError(t, err)
 		mt1Root, err := mt1.Root()
 		assert.NoError(t, err)
@@ -101,7 +101,7 @@ func TestMerkleTree_Init(t *testing.T) {
 		assert.Equal(t, "0539c6b1cac741eb1e98b2c271733d1e6f0fad557228f6b039d894b0a627c8d9", mt1Root.Hex())
 		assert.NoError(t, mt1.Commit())
 
-		mt2, err := NewZkTrieImplWithRoot(db, mt1Root, maxLevels, nil)
+		mt2, err := NewZkTrieImplWithRoot(db, mt1Root, &zkt.HashZero, maxLevels, nil)
 		assert.NoError(t, err)
 		assert.Equal(t, maxLevels, mt2.maxLevels)
 		mt2Root, err := mt2.Root()
@@ -113,7 +113,7 @@ func TestMerkleTree_Init(t *testing.T) {
 		db := NewZkTrieMemoryDb()
 		root := zkt.NewHashFromBytes([]byte{1, 2, 3, 4, 5})
 
-		mt, err := NewZkTrieImplWithRoot(db, root, maxLevels, nil)
+		mt, err := NewZkTrieImplWithRoot(db, root, &zkt.HashZero, maxLevels, nil)
 		assert.Error(t, err)
 		assert.Nil(t, mt)
 	})

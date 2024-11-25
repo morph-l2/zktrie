@@ -62,12 +62,12 @@ type ZkTrieImpl struct {
 }
 
 func NewZkTrieImpl(storage ZktrieDatabase, maxLevels int) (*ZkTrieImpl, error) {
-	return NewZkTrieImplWithRoot(storage, &zkt.HashZero, maxLevels, nil)
+	return NewZkTrieImplWithRoot(storage, &zkt.HashZero, &zkt.HashZero, maxLevels, nil)
 }
 
 // NewZkTrieImplWithRoot loads a new ZkTrieImpl. If in the storage already exists one
 // will open that one, if not, will create a new one.
-func NewZkTrieImplWithRoot(storage ZktrieDatabase, root *zkt.Hash, maxLevels int, prefix []byte) (*ZkTrieImpl, error) {
+func NewZkTrieImplWithRoot(storage ZktrieDatabase, root *zkt.Hash, origin *zkt.Hash, maxLevels int, prefix []byte) (*ZkTrieImpl, error) {
 	mt := ZkTrieImpl{
 		db:           storage,
 		maxLevels:    maxLevels,

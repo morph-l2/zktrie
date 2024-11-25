@@ -50,12 +50,12 @@ const NodeKeyValidBytes = 31
 // SecureBinaryTrie bypasses all the buffer mechanism in *Database, it directly uses the
 // underlying diskdb
 func NewZkTrie(root zkt.Byte32, db ZktrieDatabase) (*ZkTrie, error) {
-	return NewZkTrieWithPrefix(root, db, nil)
+	return NewZkTrieWithPrefix(root, zkt.Byte32{}, db, nil)
 }
 
-func NewZkTrieWithPrefix(root zkt.Byte32, db ZktrieDatabase, prefix []byte) (*ZkTrie, error) {
+func NewZkTrieWithPrefix(root zkt.Byte32, origin zkt.Byte32, db ZktrieDatabase, prefix []byte) (*ZkTrie, error) {
 	maxLevels := NodeKeyValidBytes * 8
-	tree, err := NewZkTrieImplWithRoot((db), zkt.NewHashFromBytes(root.Bytes()), maxLevels, prefix)
+	tree, err := NewZkTrieImplWithRoot((db), zkt.NewHashFromBytes(root.Bytes()), zkt.NewHashFromBytes(origin.Bytes()), maxLevels, prefix)
 	if err != nil {
 		return nil, err
 	}
