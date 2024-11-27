@@ -115,7 +115,6 @@ func (mt *ZkTrieImpl) Root() (*zkt.Hash, error) {
 	}
 
 	mt.rootKey = rootKey
-	mt.origin = rootKey
 	mt.dirtyIndex = big.NewInt(0)
 	mt.dirtyStorage = hashedDirtyStorage
 	mt.caching = newCaching
