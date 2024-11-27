@@ -55,7 +55,7 @@ func NewZkTrie(root zkt.Byte32, db ZktrieDatabase) (*ZkTrie, error) {
 
 func NewZkTrieWithPrefix(root zkt.Byte32, origin zkt.Byte32, db ZktrieDatabase, prefix []byte) (*ZkTrie, error) {
 	maxLevels := NodeKeyValidBytes * 8
-	tree, err := NewZkTrieImplWithRoot((db), zkt.NewHashFromBytes(root.Bytes()), zkt.NewHashFromBytes(origin.Bytes()), maxLevels, prefix)
+	tree, err := NewZkTrieImplWithRoot((db), zkt.NewHashFromBytes(root.Bytes()), *zkt.NewHashFromBytes(origin.Bytes()), maxLevels, prefix)
 	if err != nil {
 		return nil, err
 	}
