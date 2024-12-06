@@ -632,19 +632,6 @@ func (mt *ZkTrieImpl) tryDelete(nodePathKey *zkt.Hash, nodeKey *zkt.Hash, path [
 			mt.caching[*rightNodePathKey] = *siblingKey
 		}
 
-		// // Update child path
-		// leftNode, err := mt.getNode(leftNodePathKey)
-		// if err != nil {
-		// 	return nil, nil, false, err
-		// }
-		// mt.dirtyStorage[*leftNodePathKey] = leftNode
-
-		// rightNode, err := mt.getNode(rightNodePathKey)
-		// if err != nil {
-		// 	return nil, nil, false, err
-		// }
-		// mt.dirtyStorage[*rightNodePathKey] = rightNode
-
 		// The old parent node need prune
 		// The left or right node's path maybe not change.
 		newParentNode := NewParentNode(newNodeType, leftChild, rightChild)
