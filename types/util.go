@@ -133,10 +133,13 @@ func ReverseByteOrder(b []byte) []byte {
 }
 
 // Path to zk.Hash
-// Hash value of the root node's path
+// Hash value of the root node's path key
+// We've allocated 32 bytes to uniquely identify the root path key.
+// The max deepth structure needs 31 bytes.
 var TrieRootPathKey = NewHashFromBytes([]byte{255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255})
 
 // Prefix for valid path hash
+// The 0 path is a required valid path to distinguish it from hashzero.
 var TriePrefix = []bool{true}
 
 func PathToKey(arr []bool) *Hash {
@@ -169,7 +172,7 @@ func PathToString(arr []bool) string {
 	return str
 }
 
-func GetPathKey(prefix, path []byte) []byte {
+func GetStorageKey(prefix, path []byte) []byte {
 	key := make([]byte, len(prefix)+len(path))
 	copy(key[:len(prefix)], prefix[:])
 	copy(key[len(prefix):], path[:])

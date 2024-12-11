@@ -115,7 +115,7 @@ func TestPathWithPrefix(t *testing.T) {
 	bigNum.SetString("452312848583266388373324160190187140051835877600158453279131187530910662656", 10)
 	prefix := []byte("currentroot")
 	pathBytes := bigNum.Bytes()
-	pathKey := GetPathKey(prefix, pathBytes)
+	pathKey := GetStorageKey(prefix, pathBytes)
 	reversePath := GetPathFromKey(prefix, pathKey)
 	assert.Equal(t, pathBytes, reversePath)
 }

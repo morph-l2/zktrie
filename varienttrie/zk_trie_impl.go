@@ -248,8 +248,8 @@ func (mt *ZkTrieImpl) Commit() error {
 	defer mt.lock.Unlock()
 
 	for key, node := range mt.dirtyStorage {
-		pathKey := zkt.GetPathKey(mt.prefix, key[:])
-		if err := mt.db.Put(pathKey[:], node.CanonicalValue()); err != nil {
+		dbKey := zkt.GetStorageKey(mt.prefix, key[:])
+		if err := mt.db.Put(dbKey[:], node.CanonicalValue()); err != nil {
 			return err
 		}
 	}
@@ -289,8 +289,12 @@ func (mt *ZkTrieImpl) addLeaf(newLeaf *Node, currNodeKey *zkt.Hash,
 		if err != nil {
 			return nil, false, err
 		}
+		oldLeafHash, err := n.NodeHash()
+		if err != nil {
+			return nil, false, err
+		}
 
-		if bytes.Equal(currNodeKey[:], newLeafHash[:]) {
+		if bytes.Equal(oldLeafHash[:], newLeafHash[:]) {
 			// do nothing, duplicate entry
 			return nil, true, nil
 		} else if bytes.Equal(newLeaf.NodeKey.Bytes(), n.NodeKey.Bytes()) {
@@ -308,7 +312,7 @@ func (mt *ZkTrieImpl) addLeaf(newLeaf *Node, currNodeKey *zkt.Hash,
 		// We need to go deeper, continue traversing the tree, left or
 		// right depending on path
 		branchRight := path[lvl]
-		newChildSubTrieRootPathKey, isTerminal, err := mt.addLeaf(newLeaf, zkt.PathToKey(zkt.AppendPath(path[:lvl], branchRight)), lvl+1, path)
+		newChildSubTrieRootPathKey, isTerminal, err := mt.addLeaf(newLeaf, zkt.PathToKey(path[:lvl+1]), lvl+1, path)
 		if err != nil {
 			return nil, false, err
 		}
@@ -678,8 +682,8 @@ func (mt *ZkTrieImpl) getNode(pathKey *zkt.Hash) (*Node, error) {
 		return node, nil
 	}
 
-	key := zkt.GetPathKey(mt.prefix, pathKey[:])
-	nBytes, err := mt.db.GetFrom(mt.origin[:], key[:])
+	dbKey := zkt.GetStorageKey(mt.prefix, pathKey[:])
+	nBytes, err := mt.db.GetFrom(mt.origin[:], dbKey[:])
 	if err == ErrKeyNotFound {
 		return nil, ErrKeyNotFound
 	} else if err != nil {
