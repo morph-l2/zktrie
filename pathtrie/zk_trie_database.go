@@ -1,4 +1,4 @@
-package varienttrie
+package pathtrie
 
 import (
 	"math/big"
