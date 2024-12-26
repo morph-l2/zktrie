@@ -996,5 +996,6 @@ func (mt *ZkTrieImpl) Copy() *ZkTrieImpl {
 		Debug:        mt.Debug,
 		prefix:       mt.prefix,
 		caching:      newCaching,
+		origin:       mt.origin,
 	}
 }
