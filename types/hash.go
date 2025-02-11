@@ -1,6 +1,7 @@
 package zktrie
 
 import (
+	"bytes"
 	"encoding/hex"
 	"fmt"
 	"math/big"
@@ -81,6 +82,11 @@ func (h Hash) Hex() string {
 // BigInt returns the *big.Int representation of the *Hash
 func (h *Hash) BigInt() *big.Int {
 	return big.NewInt(0).SetBytes(ReverseByteOrder(h[:]))
+}
+
+// If the bytes of hash equal HashZero
+func (h *Hash) IsHashZero() bool {
+	return bytes.Equal(h[:], HashZero[:])
 }
 
 // Bytes returns the byte representation of the *Hash in big-endian encoding.

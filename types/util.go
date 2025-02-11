@@ -98,6 +98,15 @@ func BigEndianBitsToBigInt(bits []bool) *big.Int {
 	return result
 }
 
+func BigIntToBigEndianBits(num *big.Int) []bool {
+	base2String := num.Text(2)
+	var result []bool
+	for _, b := range base2String {
+		result = append(result, b == '1')
+	}
+	return result
+}
+
 // ToSecureKey turn the byte key into the integer represent of "secured" key
 func ToSecureKey(key []byte) (*big.Int, error) {
 	word := NewByte32FromBytesPaddingZero(key)
@@ -121,4 +130,67 @@ func ReverseByteOrder(b []byte) []byte {
 		o[len(b)-1-i] = b[i]
 	}
 	return o
+}
+
+// Path to zk.Hash
+// Hash value of the root node's path key
+// We've allocated 32 bytes to uniquely identify the root path key.
+// The max deepth structure needs 31 bytes.
+var TrieRootPathKey = NewHashFromBytes([]byte{255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255})
+
+// Prefix for valid path hash
+// The 0 path is a required valid path to distinguish it from hashzero.
+var TriePrefix = []bool{true}
+
+func PathToKey(arr []bool) *Hash {
+	if len(arr) == 0 {
+		return TrieRootPathKey
+	}
+	bigInt := BigEndianBitsToBigInt(append(TriePrefix, arr...))
+	hash := NewHashFromBigInt(bigInt)
+	return hash
+}
+
+func KeyToPath(hash *Hash) []bool {
+	if hash == nil {
+		return []bool{}
+	}
+	bigInt := hash.BigInt()
+	result := BigIntToBigEndianBits(bigInt)
+	return result[len(TriePrefix):]
+}
+
+func PathToString(arr []bool) string {
+	str := ""
+	for i := range arr {
+		if arr[i] {
+			str += "1 "
+		} else {
+			str += "0 "
+		}
+	}
+	return str
+}
+
+func GetStorageKey(prefix, path []byte) []byte {
+	key := make([]byte, len(prefix)+len(path))
+	copy(key[:len(prefix)], prefix[:])
+	copy(key[len(prefix):], path[:])
+	return key
+}
+
+func GetPathFromKey(prefix, key []byte) []byte {
+	if len(key) < len(prefix) {
+		return nil
+	}
+	path := make([]byte, len(key)-len(prefix))
+	copy(path[:], key[len(prefix):])
+	return path
+}
+
+func AppendPath(path []bool, val bool) []bool {
+	newPath := make([]bool, len(path)+1)
+	copy(newPath, path)
+	newPath[len(newPath)-1] = val
+	return newPath
 }

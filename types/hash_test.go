@@ -76,4 +76,7 @@ func TestNewHashFromBigIntAndString(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "0101010101010101010101010101010101010101010101010101010101010101", h.Hex())
 	assert.Equal(t, "45408662...", h.String())
+
+	h1 := NewHashFromBytes([]byte{255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255})
+	assert.Equal(t, h1.Hex(), "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
 }
